@@ -2,7 +2,7 @@ import pymysql
 import pandas as pd
 import streamlit as st
 
-#def get_connection():
+def get_connection():
     try:
         return pymysql.connect(
             host=st.secrets["DB_HOST"],
@@ -15,7 +15,6 @@ import streamlit as st
     except Exception as e:
         st.error(f"Database connection failed: {e}")
         raise
-
 
 ## For Filtering the Employees
 def call_filter_employees(role=None, location=None, include_inactive=True):
