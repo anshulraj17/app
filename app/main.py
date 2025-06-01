@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from db_utils import call_filter_employees, get_turnover_rates, get_industry_benchmarks, get_employee_rating_diff
+from PIL import Image
+
 
 st.set_page_config(page_title="TechSolve Workforce Insights Dashboard", layout="wide")
 
