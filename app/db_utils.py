@@ -16,16 +16,6 @@ def get_connection():
         st.error(f"Database connection failed: {e}")
         raise
 
-## For making Database connection with MYSQL
-def get_connection():
-    return pymysql.connect(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME"),
-        cursorclass=pymysql.cursors.DictCursor
-    )
-
 
 ## For Filtering the Employees
 def call_filter_employees(role=None, location=None, include_inactive=True):
