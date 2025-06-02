@@ -3,7 +3,6 @@ import pandas as pd
 import plotly.express as px
 from db_utils import call_filter_employees, get_turnover_rates, get_industry_benchmarks, get_employee_rating_diff
 
-
 st.set_page_config(page_title="TechSolve Workforce Insights Dashboard", layout="wide")
 
 # --- UI Styling ---
@@ -101,9 +100,7 @@ all_roles = sorted(all_data['role'].unique())
 all_locations = sorted(all_data['location'].unique())
 
 # --- Sidebar: Filters and Increment Options ---
-#st.sidebar.image("assets/logo.jpg", use_container_width=True)
-st.sidebar.header("TechSolve Inc.")
-st.markdown("---")
+st.sidebar.image("logo.png", use_container_width=True)
 st.sidebar.header("Filter Options")
 employee_status_option = st.sidebar.radio(
     "Select Employee Status",
@@ -580,7 +577,6 @@ if selected_sim_role != "All":
 
 if selected_sim_location != "All":
     relevant_df = relevant_df[relevant_df['location'] == selected_sim_location]
-
 # Ensure numeric ops are safe
 relevant_df['current_comp_inr'] = relevant_df['current_comp_inr'].astype(float)
 
@@ -627,72 +623,68 @@ if not relevant_df.empty:
         },
         xaxis=dict(title_font=dict(size=20), tickfont=dict(size=20)),
         yaxis=dict(title_font=dict(size=20), tickfont=dict(size=20)),
-        legend=dict(title_font=dict(size=20), font=dict(size=20))  # Optional: for consistency
+        legend=dict(title_font=dict(size=20), font=dict(size=20))
     )
 
-    fig_sim.update_traces(
-        marker_color=["#205781", "#198754"],
-        width=0.40
-
-    )
-
-
-
+    fig_sim.update_traces(marker_color=["#205781", "#198754"], width=0.40)
     st.plotly_chart(fig_sim, use_container_width=True)
 
-# --- 📊 Summary Table ---
-num_employees = len(relevant_df)
-total_current = relevant_df['current_comp_inr'].sum()
-total_updated = relevant_df['revised_compensation'].sum()
-additional_cost = total_updated - total_current
-percent_increase = (additional_cost / total_current) * 100 if total_current != 0 else 0
+    # --- 📊 Summary Table ---
+    num_employees = len(relevant_df)
+    total_current = relevant_df['current_comp_inr'].sum()
+    total_updated = relevant_df['revised_compensation'].sum()
+    additional_cost = total_updated - total_current
+    percent_increase = (additional_cost / total_current) * 100 if total_current != 0 else 0
 
-if benefit_type == "Stock Option":
-    annual_pl_impact = additional_cost / vesting_period
-else:
-    annual_pl_impact = additional_cost
-
-# Constants
-annual_revenue = 60e7  # ₹60 Cr in INR
-
-# Calculations for new rows
-current_comp_pct_of_revenue = (total_current / annual_revenue) * 100
-updated_comp_pct_of_revenue = ((total_current + annual_pl_impact) / annual_revenue) * 100
-
-def format_currency(value, scale='L'):
-    if scale == 'Cr':
-        return f"₹{value/1e7:.2f} Cr"
-    elif scale == 'L':
-        return f"₹{value/1e5:.2f} L"
+    if benefit_type == "Stock Option":
+        annual_pl_impact = additional_cost / vesting_period
     else:
-        return f"₹{value:,.0f}"
+        annual_pl_impact = additional_cost
 
-summary_data = {
-    "Metric": [
-        "No. of Employees",
-        "Total Current Compensation",
-        "Additional Cost",
-        "Total Updated Compensation",
-        "% Increase in Cost",
-        "Annual P & L Impact",
-        "Current Compensation Cost (% of Revenue)",
-        "Updated Compensation Cost (% of Revenue)"
-    ],
-    benefit_type + " Scenario": [
-        num_employees,
-        format_currency(total_current, 'Cr'),
-        format_currency(additional_cost, 'L'),
-        format_currency(total_updated, 'Cr'),
-        f"{percent_increase:.1f}%",
-        format_currency(annual_pl_impact, 'L'),
-        f"{current_comp_pct_of_revenue:.2f}%",
-        f"{updated_comp_pct_of_revenue:.2f}%"
-    ]
-}
+    # Constants
+    annual_revenue = 60e7  # ₹60 Cr in INR
 
-summary_df = pd.DataFrame(summary_data)
-st.subheader("📋 Financial Impact Summary")
-st.dataframe(summary_df, use_container_width=True)
+    # Calculations for new rows
+    current_comp_pct_of_revenue = (total_current / annual_revenue) * 100
+    updated_comp_pct_of_revenue = ((total_current + annual_pl_impact) / annual_revenue) * 100
+
+    def format_currency(value, scale='L'):
+        if scale == 'Cr':
+            return f"₹{value/1e7:.2f} Cr"
+        elif scale == 'L':
+            return f"₹{value/1e5:.2f} L"
+        else:
+            return f"₹{value:,.0f}"
+
+    summary_data = {
+        "Metric": [
+            "No. of Employees",
+            "Total Current Compensation",
+            "Additional Cost",
+            "Total Updated Compensation",
+            "% Increase in Cost",
+            "Annual P & L Impact",
+            "Current Compensation Cost (% of Revenue)",
+            "Updated Compensation Cost (% of Revenue)"
+        ],
+        benefit_type + " Scenario": [
+            num_employees,
+            format_currency(total_current, 'Cr'),
+            format_currency(additional_cost, 'L'),
+            format_currency(total_updated, 'Cr'),
+            f"{percent_increase:.1f}%",
+            format_currency(annual_pl_impact, 'L'),
+            f"{current_comp_pct_of_revenue:.2f}%",
+            f"{updated_comp_pct_of_revenue:.2f}%"
+        ]
+    }
+
+    summary_df = pd.DataFrame(summary_data)
+    st.subheader("📋 Financial Impact Summary")
+    st.dataframe(summary_df, use_container_width=True)
+
+else:
+    st.warning("No relevant employees found. Please select 'Active Employees' or 'All Employees' for this simulation.")
 
 
 st.markdown("### 📁 Download Filtered Data")
