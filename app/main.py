@@ -102,7 +102,7 @@ all_locations = sorted(all_data['location'].unique())
 # --- Sidebar: Filters and Increment Options ---
 
 st.sidebar.header("TechSolve Inc.")
-stsidebar.header("---")
+
 st.sidebar.header("Filter Options")
 employee_status_option = st.sidebar.radio(
     "Select Employee Status",
