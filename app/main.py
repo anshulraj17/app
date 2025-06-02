@@ -100,7 +100,9 @@ all_roles = sorted(all_data['role'].unique())
 all_locations = sorted(all_data['location'].unique())
 
 # --- Sidebar: Filters and Increment Options ---
-st.sidebar.image("logo.png", use_container_width=True)
+
+st.markdown("## TechSolve Inc.")
+st.markdown("---")
 st.sidebar.header("Filter Options")
 employee_status_option = st.sidebar.radio(
     "Select Employee Status",
